@@ -34,21 +34,27 @@ namespace DotNet.Push
             HostServerUrl = production ? "api.push.apple.com" : "api.development.push.apple.com";
             HostPort = port;
 
-            APNsPrivateKeyId = apnsPrivatekeyId;
-            APNsPrivateKey = getP8PrivateKey(apnsPrivateKey);
+            PrivateKeyId = apnsPrivatekeyId;
+            P8PrivateKey = getP8PrivateKey(apnsPrivateKey);
 
             ExpireMinutes = expireMinutes;
         }
 
+        private static DateTimeOffset UnixEpoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
         private long getEpochTimestamp()
         {
-            return (long)Math.Round((DateTime.UtcNow - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+            return (long)Math.Round((DateTime.UtcNow - UnixEpoch).TotalSeconds);
         }
 
         private string getP8PrivateKey(string auth_key_path)
         {
-            var content = System.IO.File.ReadAllText(auth_key_path);
-            return content.Split('\n')[1];
+            //    var content = System.IO.File.ReadAllText(auth_key_path);
+            //    return content.Split('\n')[1];
+
+            var content = System.IO.File.ReadAllLines(auth_key_path);
+            var privateKeyLines = content.Skip(1).Take(content.Length - 2); // 첫 줄과 마지막 줄을 제외
+            return string.Join("", privateKeyLines); // 모든 줄을 하나의 문자열로 합침
         }
 
         private string getJwtToken()
@@ -56,7 +62,7 @@ namespace DotNet.Push
             var header = JsonSerializer.Serialize(new
             {
                 alg = Algorithm,
-                kid = APNsPrivateKeyId
+                kid = PrivateKeyId
             });
 
             var timestamp = getEpochTimestamp();
@@ -70,11 +76,11 @@ namespace DotNet.Push
 
             var header_base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(header));
             var payload_base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(payload));
-
+             
             var jwt_data = $"{header_base64}.{payload_base64}";
             var jwt_bytes = Encoding.UTF8.GetBytes(jwt_data);
 
-            var key_bytes = Convert.FromBase64String(APNsPrivateKey);
+            var key_bytes = Convert.FromBase64String(P8PrivateKey);
 
             using var ecdsa = ECDsa.Create();
             ecdsa.ImportPkcs8PrivateKey(key_bytes, out _);
@@ -174,13 +180,13 @@ namespace DotNet.Push
         /// <summary>
         /// Token Based Authentication APNs push
         /// </summary>
-        /// <param name="device_token">device token</param>
+        /// <param name="deviceToken">device token</param>
         /// <param name="content">push content</param>
         /// <param name="badge">badge number</param>
         /// <param name="sound">sound file name</param>
-        public async Task<(bool success, string message)> JwtAPNsPushAsync(string device_token, object content, string apnsId, int badge, string sound, CancellationToken cancellationToken = default)
+        public async Task<(bool success, string message)> JwtAPNsPushAsync(string deviceToken, object content, string apnsId, int badge, string sound, CancellationToken cancellationToken = default)
         {
-            var requestUri = new Uri($"https://{HostServerUrl}:{HostPort}/3/device/{device_token}");
+            var requestUri = new Uri($"https://{HostServerUrl}:{HostPort}/3/device/{deviceToken}");
 
             var accessToken = JwtToken;
             {
@@ -248,7 +254,7 @@ namespace DotNet.Push
         /// <summary>
         ///
         /// </summary>
-        public string APNsPrivateKeyId
+        public string PrivateKeyId
         {
             get;
         }
@@ -256,7 +262,7 @@ namespace DotNet.Push
         /// <summary>
         ///
         /// </summary>
-        public string APNsPrivateKey
+        public string P8PrivateKey
         {
             get;
         }

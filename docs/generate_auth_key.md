@@ -18,7 +18,7 @@ Download the .p8 file and note the key ID and the .p8 filename, as we'll need th
 
 ```
 APNS_KEY_ID = 'ABC123DEFG'
-APNS_AUTH_KEY = '/PATH_TO/APNSAuthKey_ ABC123DEFG.p8'
+APNS_AUTH_KEY = '/PATH_TO/APNSAuthKey_ABC123DEFG.p8'
 ```
 
 ![image](http://gobiko.com/media/images/Screen_Shot_2016-09-24_at_5.02.01_AM.original.png)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28714.193
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3402294-C352-4F8A-85A9-7D4DCBF34011}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Push", "src\DotNet.P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Push.Sample", "samples\DotNet.Push.Sample\DotNet.Push.Sample.csproj", "{EC3FF747-55B8-44EC-A2F1-047EE3B2B68E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Push.Maui", "src\DotNet.Push.Maui\DotNet.Push.Maui.csproj", "{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,12 @@ Global
 		{EC3FF747-55B8-44EC-A2F1-047EE3B2B68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC3FF747-55B8-44EC-A2F1-047EE3B2B68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC3FF747-55B8-44EC-A2F1-047EE3B2B68E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0965F86B-9CC7-49F1-A5D0-3E3AAAC01EA0}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
