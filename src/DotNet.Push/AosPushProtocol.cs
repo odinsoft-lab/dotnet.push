@@ -1,15 +1,14 @@
 ﻿namespace DotNet.Push
 {
     /// <summary>
-    /// 다운스트림 HTTP 메시지(JSON)의 대상, 옵션, 페이로드
+    /// Target, options, and payload of a downstream HTTP message (JSON)
     /// </summary>
     public class AosPushProtocol
     {
         /// <summary>
-        /// 이 매개변수는 메시지의 수신자를 지정합니다.
-        /// 값은 등록 토큰, 알림 키 또는 주제여야 합니다.
-        /// 여러 주제로 보내는 경우에는 이 필드를 설정해서는 안 됩니다.
-        /// condition을 참조하세요.
+        /// Specifies the recipient of the message.
+        /// The value must be a registration token, a notification key, or a topic.
+        /// Do not set this field when sending to multiple topics; use the 'condition' field instead.
         /// </summary>
         public string to
         {
@@ -17,10 +16,10 @@
         }
 
         /// <summary>
-        /// 이 매개변수는 멀티캐스트 메시지를 수신하는 기기의 목록을 등록 토큰 또는 ID로 지정합니다.
-        /// 1~1,000개 사이의 등록 토큰이 포함되어야 합니다.
-        /// 단일 수신자가 아닌 멀티캐스트 메시징의 경우에만 이 매개변수를 사용하세요.
-        /// 2개 이상의 등록 토큰으로 보내는 멀티캐스트 메시지는 HTTP JSON 형식만 사용할 수 있습니다.
+        /// Specifies a list of device registration tokens or IDs that will receive a multicast message.
+        /// Must contain between 1 and 1,000 registration tokens.
+        /// Use this parameter only for multicast messaging, not a single recipient.
+        /// When sending to two or more registration tokens, only the HTTP JSON format is supported.
         /// </summary>
         public string registration_ids
         {
@@ -28,9 +27,9 @@
         }
 
         /// <summary>
-        /// 이 매개변수는 메시지 대상을 결정하는 조건의 논리식을 지정합니다.
-        /// 지원되는 조건은 형식이 ''yourTopic' in topics'로 지정된 주제입니다.이 값은 대소문자를 구분합니다.
-        /// 지원되는 연산자는 &&, ||입니다.주제 메시지당 최대 2개의 연산자가 지원됩니다.
+        /// Specifies a logical expression of conditions that determine the message target.
+        /// Supported conditions are topics specified in the form: "'yourTopic' in topics" (case-sensitive).
+        /// Supported operators are && and ||. Up to two operators are supported per topic message.
         /// </summary>
         public string condition
         {
@@ -38,14 +37,13 @@
         }
 
         /// <summary>
-        /// 이 매개변수는 전송을 재개할 수 있을 때 마지막 메시지만 보내도록 축소가
-        /// 가능한 메시지(예: collapse_key: "Updates Available" 포함 메시지) 그룹을 의미합니다.
-        /// 기기가 다시 온라인 또는 활성 상태가 되었을 때 동일한 메시지가 너무 많이 전송되는 것을 방지하기 위한 메시지입니다.
+        /// Identifies a group of collapsible messages where only the last message is delivered
+        /// when delivery can be resumed (e.g., collapse_key: "Updates Available").
+        /// This helps avoid sending too many of the same message when the device comes online or becomes active again.
         ///
-        /// 메시지가 전송되는 순서는 보장되지 않는다는 점에 유의하세요.
-        /// 참고: 지정한 기간에 최대 4개의 다른 축소 키가 허용됩니다.
-        /// 즉, FCM 연결 서버는 클라이언트 앱당 4개의 다른 동기화 전송 메시지를 동시에 저장할 수 있습니다.
-        /// 이 한도를 초과하면 FCM 연결 서버가 축소 키 중 어떤 키 4개를 유지할지 보장되지 않습니다.
+        /// Note: Delivery order is not guaranteed. At most four different collapse keys are allowed during a given period.
+        /// That is, the FCM connection server can store up to four different sync messages per client app at a time.
+        /// If you exceed this limit, the server does not guarantee which four collapse keys will be kept.
         /// </summary>
         public string collapse_key
         {
@@ -53,12 +51,10 @@
         }
 
         /// <summary>
-        /// 메시지의 우선순위를 설정합니다. 유효한 값은 'normal' 및 'high'입니다. iOS에서는 APN 우선순위 5 및 10에 해당합니다.
-        /// 기본적으로 알림 메시지는 높은 우선순위로, 데이터 메시지는 보통 우선순위로 전송됩니다.
-        /// 보통 우선순위는 클라이언트 앱의 배터리 소비를 최적화하기 때문에 즉시 전송해야 하는 경우가 아니라면 이 우선순위를 사용하는 것이 좋습니다.
-        /// 우선순위가 보통인 메시지의 경우 앱이 메시지를 수신할 때 지정되지 않은 지연이 발생할 수 있습니다.
-        /// 높은 우선순위로 메시지를 보내면 즉시 전송되며 앱이 기기의 절전 모드를 해제하고 서버로 연결되는 네트워크 연결을 열 수 있습니다.
-        /// 자세한 내용은 메시지 우선순위 설정을 참조하세요.
+        /// Sets the message priority. Valid values are 'normal' and 'high'. On iOS these map to APNs priorities 5 and 10.
+        /// By default, notification messages are sent with high priority and data messages with normal priority.
+        /// Normal priority optimizes battery usage and may introduce unspecified delivery delays.
+        /// High priority attempts immediate delivery and may wake the device and open a network connection to your server.
         /// </summary>
         public string priority
         {
@@ -66,16 +62,16 @@
         }
 
         /// <summary>
-        /// 이 매개변수는 메시지 페이로드의 맞춤 키-값 쌍을 지정합니다.
+        /// Custom key/value pairs to include in the message payload.
         ///
-        /// 예를 들어 data:{"score":"3x1"}:인 경우 다음과 같습니다.
-        /// iOS에서는 메시지가 APNS를 통해 전송되는 경우 맞춤 데이터 필드를 나타냅니다.
-        /// FCM 연결 서버를 통해 전송되는 경우에는 AppDelegate application:didReceiveRemoteNotification:의 키와 값으로 구성된 사전으로 표시됩니다.
+        /// For example, data:{"score":"3x1"}.
+        /// On iOS via APNs this represents custom data fields; via the FCM connection server it is delivered
+        /// as a dictionary of keys and values to AppDelegate application:didReceiveRemoteNotification:.
         ///
-        /// Android에서는 문자열 값이 3x1인 score라는 추가 인텐트가 생성됩니다.
-        /// 키가 예약된 단어('google'이나 'gcm'으로 시작하는 모든 단어 또는 'from')여서는 안 됩니다.
-        /// 이 표에 정의되어 있는 모든 단어(예: collapse_key)도 사용해서는 안 됩니다.
-        /// 문자열 유형의 값을 사용하는 것이 좋습니다.개체의 값이나 문자열이 아닌 기타 데이터 유형(예: 정수 또는 부울)은 문자열로 변환해야 합니다.
+        /// On Android this creates an intent extra named 'score' with the string value '3x1'.
+        /// Keys must not use reserved words (any key starting with 'google' or 'gcm', or 'from').
+        /// Do not reuse keys defined elsewhere (e.g., collapse_key).
+        /// Prefer string values. Objects or non-string types (e.g., integers or booleans) should be converted to strings.
         /// </summary>
         public AosNotifyData data
         {
@@ -83,9 +79,8 @@
         }
 
         /// <summary>
-        /// 이 매개변수는 사용자에게 표시되는 사전 정의된 알림 페이로드의 키-값 쌍을 지정합니다.
-        /// 자세한 내용은 알림 페이로드 지원을 참조하세요.
-        /// 알림 메시지 및 데이터 메시지 옵션에 대한 자세한 내용은 페이로드를 참조하세요.
+        /// Predefined notification payload key/value pairs that are displayed to the user.
+        /// For more details, see the notification payload support and payload options documentation.
         /// </summary>
         public AosNotification notification
         {
@@ -94,12 +89,12 @@
     }
 
     /// <summary>
-    /// Android — 알림 메시지 키
+    /// Android — notification message keys
     /// </summary>
     public class AosNotification
     {
         /// <summary>
-        /// 알림 제목을 나타냅니다.
+        /// The notification title.
         /// </summary>
         public string title
         {
@@ -107,7 +102,7 @@
         }
 
         /// <summary>
-        /// 알림 본문 텍스트를 나타냅니다.
+        /// The notification body text.
         /// </summary>
         public string body
         {
@@ -115,8 +110,8 @@
         }
 
         /// <summary>
-        /// 알림 아이콘을 나타냅니다. 드로어블 리소스 myicon의 경우 값이 myicon으로 설정됩니다.
-        /// 요청에서 이 키를 전송하지 않으면 FCM은 앱 매니페스트에 지정된 런처 아이콘을 표시합니다.
+        /// The notification icon. For a drawable resource named 'myicon', set the value to 'myicon'.
+        /// If omitted, FCM displays the launcher icon specified in the app manifest.
         /// </summary>
         public string icon
         {
@@ -124,9 +119,8 @@
         }
 
         /// <summary>
-        /// 기기가 알림을 수신하면 재생할 사운드를 나타냅니다.
-        /// default 또는 앱에 번들로 포함된 사운드 리소스의 파일 이름을 지원합니다.
-        /// 사운드 파일은 /res/raw/에 있어야 합니다.
+        /// The sound to play when the device receives the notification.
+        /// Supports 'default' or the filename of a bundled sound resource located under /res/raw/.
         /// </summary>
         public string sound
         {
@@ -134,9 +128,9 @@
         }
 
         /// <summary>
-        /// Android의 알림 창에 각 알림이 새로 입력되는지 여부를 나타냅니다.
-        /// 설정되지 않은 경우 요청이 새 알림을 만듭니다.
-        /// 설정되어 있는 경우 태그가 동일한 알림이 이미 표시되고 있다면 새 알림이 알림 창의 기존 알림을 대체합니다.
+        /// Whether each notification appears as a new entry in the Android notification drawer.
+        /// If unset, the request creates a new notification. If set and a notification with the same tag
+        /// is already displayed, the new notification replaces the existing one.
         /// </summary>
         public string tag
         {
@@ -144,7 +138,7 @@
         }
 
         /// <summary>
-        /// #rrggbb 형식으로 표현된 아이콘 색상을 나타냅니다.
+        /// The icon color, expressed in the #rrggbb format.
         /// </summary>
         public string color
         {
@@ -152,8 +146,7 @@
         }
 
         /// <summary>
-        /// 사용자의 알림 클릭과 관련된 작업을 나타냅니다.
-        /// 이 키를 설정하면 사용자가 알림을 클릭할 때 일치하는 인텐트 필터가 있는 액티비티가 실행됩니다.
+        /// The action associated with the user's click. When set, an activity with a matching intent filter is launched.
         /// </summary>
         public string click_action
         {
@@ -161,8 +154,7 @@
         }
 
         /// <summary>
-        /// 현지화를 위한 본문 문자열의 키를 나타냅니다.
-        /// 이 값을 채우려면 앱의 문자열 리소스에 있는 키를 사용합니다.
+        /// The key for a localized body string. Use a key from your app's string resources.
         /// </summary>
         public string body_loc_key
         {
@@ -170,9 +162,8 @@
         }
 
         /// <summary>
-        /// 현지화를 위한 본문 문자열의 형식 지정자를 대체하는 문자열 값을 나타냅니다.
-        /// 자세한 내용은 형식 및 스타일 지정을 참조하세요.
-        /// refer: https://developer.android.com/guide/topics/resources/string-resource.html?hl=ko#FormattingAndStyling
+        /// String values to substitute format specifiers in the localized body string.
+        /// See: https://developer.android.com/guide/topics/resources/string-resource#FormattingAndStyling
         /// </summary>
         public string body_loc_args
         {
@@ -180,8 +171,7 @@
         }
 
         /// <summary>
-        /// 현지화를 위한 제목 문자열의 키를 나타냅니다.
-        /// 이 값을 채우려면 앱의 문자열 리소스에 있는 키를 사용합니다.
+        /// The key for a localized title string. Use a key from your app's string resources.
         /// </summary>
         public string title_loc_key
         {
@@ -189,9 +179,8 @@
         }
 
         /// <summary>
-        /// 현지화를 위한 제목 문자열의 형식 지정자를 대체하는 문자열 값을 나타냅니다.
-        /// 자세한 내용은 문자열 형식 지정을 참조하세요.
-        /// refer: https://developer.android.com/guide/topics/resources/string-resource.html?hl=ko#FormattingAndStyling
+        /// String values to substitute format specifiers in the localized title string.
+        /// See: https://developer.android.com/guide/topics/resources/string-resource#FormattingAndStyling
         /// </summary>
         public string title_loc_args
         {
@@ -200,12 +189,12 @@
     }
 
     /// <summary>
-    ///
+    /// Custom data payload for Android
     /// </summary>
     public class AosNotifyData
     {
         /// <summary>
-        /// 클라이언트 앱 홈 아이콘의 배지를 나타냅니다.
+        /// The number to display as the badge of the app icon.
         /// </summary>
         public int badge
         {
@@ -213,7 +202,7 @@
         }
 
         /// <summary>
-        ///
+        /// A short title for the content.
         /// </summary>
         public string title
         {
@@ -221,7 +210,7 @@
         }
 
         /// <summary>
-        ///
+        /// The message content.
         /// </summary>
         public string message
         {

@@ -1,4 +1,8 @@
-# [Token Based Authentication and HTTP/2 Example with APNS](http://gobiko.com/blog/token-based-authentication-http2-example-apns/)
+# Token Based Authentication and HTTP/2 Example with APNS (reference)
+
+Note (2025): The article linked below remains a useful reference for APNs token-based auth. Screens in Apple Developer may have evolved; always consult the latest Apple docs alongside this guide.
+
+[Original article](http://gobiko.com/blog/token-based-authentication-http2-example-apns/)
 
 ## Generate an auth key
 Now, head over to the Apple member center and generate an APNS auth key. In the Certificates, Identifiers & Profiles section of the Member Center, under Certificates there is a new section APNs Auth Key. There click the add button to create a new key.

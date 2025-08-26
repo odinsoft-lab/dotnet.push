@@ -11,11 +11,11 @@ namespace DotNet.Push
     public class AosPushNotifyFCM
     {
         /// <summary>
-        ///
+        /// Initialize the FCM pusher with server credentials and a default notification tag.
         /// </summary>
         /// <param name="serverKey"></param>
         /// <param name="serverId"></param>
-        /// <param name="alarmTag">Android의 알림 창에 각 알림이 새로 입력되는지 여부를 나타냅니다.</param>
+        /// <param name="alarmTag">Whether each notification appears as a new entry in Android's notification drawer.</param>
         public AosPushNotifyFCM(string serverKey, string serverId, string alarmTag)
         {
             ServerKey = serverKey;
@@ -24,7 +24,7 @@ namespace DotNet.Push
         }
 
         /// <summary>
-        ///
+        /// Send a notification to a specific device token.
         /// </summary>
         /// <param name="deviceToken"></param>
         /// <param name="priority">high,normal</param>
@@ -99,7 +99,7 @@ namespace DotNet.Push
         }
 
         /// <summary>
-        ///
+        /// FCM server key
         /// </summary>
         public string ServerKey
         {
@@ -108,7 +108,7 @@ namespace DotNet.Push
         }
 
         /// <summary>
-        ///
+        /// FCM sender ID
         /// </summary>
         public string ServerId
         {
@@ -117,7 +117,7 @@ namespace DotNet.Push
         }
 
         /// <summary>
-        ///
+        /// Default notification tag for Android
         /// </summary>
         public string AlarmTag
         {

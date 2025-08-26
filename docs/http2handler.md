@@ -1,4 +1,12 @@
-## [How to make the .net HttpClient use http 2.0?](http://stackoverflow.com/questions/32685151/how-to-make-the-net-httpclient-use-http-2-0)
+## Using HTTP/2 with .NET HttpClient (2025 update)
+
+Modern .NET (7/8/9) negotiates HTTP/2 automatically when supported by the server, TLS, and platform. You usually do not need a custom handler; `HttpClient` will use HTTP/2 or HTTP/3 when available. You can also set `HttpRequestMessage.Version = HttpVersion.Version20` or `new HttpRequestMessage { VersionPolicy = HttpVersionPolicy.RequestVersionOrHigher }` for intent.
+
+The legacy guidance below is preserved for older .NET Framework/Windows stacks that required WinHttpHandler.
+
+---
+
+## [How to make the .NET HttpClient use HTTP/2?](http://stackoverflow.com/questions/32685151/how-to-make-the-net-httpclient-use-http-2-0)
 
 ### Q
 
@@ -56,7 +64,7 @@ public class Http2CustomHandler : WinHttpHandler
 }
 ```
 
-4.Pass above handler to the HttpClient constructor
+4.Pass the handler above to the HttpClient constructor
 
 ```c#
 using (var httpClient = new HttpClient(new Http2CustomHandler()))

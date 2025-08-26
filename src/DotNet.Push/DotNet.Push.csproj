@@ -1,19 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+
 		<Title>DotNet Push Notification</Title>
 		<Description>Push Notification Service Library</Description>
-		<Copyright>Copyright OdinSoft Co., Ltd. 2015-2023</Copyright>
+		<Copyright>Copyright OdinSoft Co., Ltd. 2015-2025</Copyright>
 		<AssemblyTitle>DotNet.Push.Core</AssemblyTitle>
 		<Authors>SEONGAHN LEE</Authors>
 		<AssemblyName>DotNet.Push</AssemblyName>
-		
+
 		<PackageId>DotNet.Push</PackageId>
 		<PackageTags>sdk;odinsoft;push;apns</PackageTags>
 		<PackageIcon>dotnet.push.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/lisa3907/DotnetPush</PackageProjectUrl>
-		
+
 		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
 		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
 		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
@@ -26,19 +28,19 @@
 		<AssemblyVersion>3.2.3.12</AssemblyVersion>
 
 		<PackageReleaseNotes>update to core 7.0 &amp; nuget update</PackageReleaseNotes>
-		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\..\logo-files\dotnet.push.png">
+		<None Include="..\..\docs\logo-files\dotnet.push.png">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\..\LICENSE.txt">
+		<None Include="..\..\LICENSE.md">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>

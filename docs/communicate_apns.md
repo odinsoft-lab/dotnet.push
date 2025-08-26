@@ -1,44 +1,48 @@
-# [Communicating with APNs](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html)
+# Communicating with APNs (refreshed)
 
-APN(Apple Push Notification) 공급자 API를 사용하면 APN에 원격 알림 요청을 보낼 수 있습니다. 
-그런 다음 APN은 iOS, tvOS 및 macOS 기기의 앱과 iOS를 통한 Apple Watch에 알림을 전달합니다.
+This document consolidates guidance from Apple's Remote Notifications programming guide. Links and examples remain valid as of 2025; verify against the latest Apple docs for changes.
 
-공급자 API는 HTTP/2 네트워크 프로토콜을 기반으로합니다. 
-각 상호 작용은 공급자로부터 JSON 페이로드와 장치 토큰을 포함하는 POST 요청으로 시작됩니다. 
-APN은 요청에 포함 된 기기 토큰으로 식별되는 특정 사용자 기기의 앱으로 알림 페이로드를 전달합니다.
+[Official reference](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html)
 
-공급자는 APN을 사용하도록 구성하고 배포하고 관리하는 서버입니다.
+The Apple Push Notification (APNs) Provider API lets you send remote notification requests to APNs. 
+APNs then delivers notifications to apps on iOS, tvOS, macOS devices, and to Apple Watch via iOS.
+
+The provider API is based on the HTTP/2 network protocol. 
+Each interaction starts with a POST request from the provider that includes a JSON payload and a device token. 
+APNs delivers the notification payload to the app on a specific user device that is identified by the device token in the request.
+
+A provider is the server that you configure, deploy, and manage to use APNs.
 
 
 ## Provider Authentication Tokens
 
-APN에 안전하게 연결하려면 공급자 인증 토큰 또는 공급자 인증서를 사용할 수 있습니다. 
-이 절에서는 토큰을 사용하는 연결에 대해 설명합니다.
+To connect securely to APNs you can use either a provider authentication token or a provider certificate. 
+This section describes connections that use tokens.
 
-공급자 API는 JWT (JSON Web Token) 사양을 지원하므로 각 푸시 알림과 함께 클레임이라는 문과 메타 데이터를 APN에 전달할 수 있습니다. 
-자세한 내용은 [https://tools.ietf.org/html/rfc7519](https://tools.ietf.org/html/rfc7519)의 사양을 참조하십시오. 
-JWT에 대한 추가 정보와 서명 된 JWT를 생성하는 데 사용할 수있는 라이브러리 목록은 [https://jwt.io](https://jwt.io/)를 참조하십시오.
-
-
-공급자 인증 토큰은 구성하는 JSON 객체이며 헤더에는 다음을 포함해야합니다.
-
- - 토큰을 암호화하는 데 사용하는 암호화 알고리즘 (alg)
- - [개발자 계정](https://developer.apple.com/account/)에서 가져온 10 자의 키 식별자 (키) 키
+The provider API supports the JSON Web Token (JWT) specification so you can pass a set of claims and metadata along with each push notification. 
+See the specification at [https://tools.ietf.org/html/rfc7519](https://tools.ietf.org/html/rfc7519). 
+For additional information about JWT and a list of libraries you can use to generate signed JWTs, see [https://jwt.io](https://jwt.io/).
 
 
-토큰의 클레임 페이로드에는 다음이 포함되어야합니다.
+The provider authentication token is a JSON object that must include the following in the header:
 
- - 발급자 (iss) 등록 된 클레임 키, [개발자 계정](https://developer.apple.com/account/)에서 가져온 값은 10 자 팀 ID입니다.
- - 발행 된 (iat) 등록 된 클레임 키입니다.이 값은 토큰이 생성 된 시간을 나타내는 값으로, 에포크 이후 경과 한 초 수를 기준으로 UTC 값 입니다.
+ - The cryptographic algorithm used to encrypt the token (`alg`)
+ - The 10-character key identifier (`kid`) obtained from your [Apple Developer account](https://developer.apple.com/account/)
 
 
-토큰을 만든 후에는 개인 키로 서명해야합니다. 
-그런 다음 P-256 곡선과 SHA-256 해시 알고리즘이있는 ECDSA (Elliptic Curve Digital Signature Algorithm)를 사용하여 토큰을 암호화해야합니다. 
-알고리즘 헤더 키 (alg)에 ES256 값을 지정하십시오. 
+The token’s claims payload must include:
 
-토큰을 구성하는 방법에 대한 자세한 내용은 Xcode 도움말의 ["푸시 알림 구성"](http://help.apple.com/xcode/mac/current/#/dev11b059073)을 참조하십시오.
+ - The issuer (`iss`) registered claim key, whose value is your 10-character Team ID from your [Apple Developer account](https://developer.apple.com/account/)
+ - The issued at (`iat`) registered claim key, the time the token was generated as a UTC value in seconds since the epoch
 
-APN에 대한 디코드 된 JWT 공급자 인증 토큰의 형식은 다음과 같습니다.:
+
+After creating the token, sign it with your private key. 
+Then encrypt the token using ECDSA (Elliptic Curve Digital Signature Algorithm) with the P-256 curve and the SHA-256 hash algorithm. 
+Specify `ES256` in the algorithm header key (`alg`). 
+
+For more details on composing the token, see [Configure push notifications](http://help.apple.com/xcode/mac/current/#/dev11b059073) in Xcode Help.
+
+The decoded JWT provider authentication token for APNs has the following format:
 
 
 ```json
@@ -54,27 +58,27 @@ APN에 대한 디코드 된 JWT 공급자 인증 토큰의 형식은 다음과 �
 
 ```
 (NOTE)
-APN은 ES256 알고리즘으로 서명 된 공급자 인증 토큰 만 지원합니다. 
-보안되지 않은 JWT 또는 다른 알고리즘으로 서명 된 JWT는 거부되고 공급자는 InvalidProviderToken (403) 응답을 받습니다.
+APNs supports only provider authentication tokens signed with the `ES256` algorithm. 
+Unsigned JWTs or JWTs signed with other algorithms are rejected and the provider receives an `InvalidProviderToken (403)` response.
 ```
 
-보안을 보장하기 위해 APN은 주기적으로 새 토큰을 생성해야합니다. 
+For security, you must periodically generate a new token. 
 
-새 토큰에는 토큰이 생성 된 시간을 나타내는 claim 키에서 업데이트 된 발급 항목이 있습니다. 
-토큰 문제에 대한 타임 스탬프가 지난 1 시간 이내에 있지 않으면 APN은 후속 푸시 메시지를 거부하고 ExpiredProviderToken (403) 오류를 반환합니다.
+The new token includes an updated issued-at entry indicating when the token was created. 
+If the timestamp is not within the last hour, APNs rejects subsequent push messages and returns an `ExpiredProviderToken (403)` error.
 
-제공자 토큰 서명 키가 유출 된 것으로 의심되는 경우 [개발자 계정](https://developer.apple.com/account/)에서 해지 할 수 있습니다. 
-새 키 쌍을 발행 할 수 있으며 새 개인 키를 사용하여 새 토큰을 생성 할 수 있습니다. 
-보안을 최대화하려면 지금 취소 된 키로 서명 된 토큰을 사용하고 있었던 APN에 대한 모든 연결을 닫고 새 키로 서명 된 토큰을 사용하기 전에 다시 연결하십시오.
+If you suspect your provider token signing key has been compromised, revoke it in your [Apple Developer account](https://developer.apple.com/account/). 
+You can issue a new key pair and use the new private key to generate new tokens. 
+To maximize security, close all existing connections to APNs that used the now-revoked key and reconnect before using tokens signed with the new key.
 
 
 ## APNs Provider Certificates
 
-Xcode 도움말의 "푸시 알림 구성"에서 설명 한 방법으로 APN 제공자 인증서를 사용하면 APN 제작 및 개발 환경에 모두 연결할 수 있습니다.
+Using APNs provider certificates as described in Xcode Help's "Configure push notifications" lets you connect to both the APNs production and development environments.
 
-APN 인증서를 사용하여 번들 ID로 식별되는 기본 앱과 해당 앱과 관련된 모든 Apple Watch 합병증 또는 배경 VoIP 서비스에 알림을 보낼 수 있습니다. 
-인증서에서 (1.2.840.113635.100.6.3.6) 확장명을 사용하여 푸시 알림의 주제를 식별하십시오. 
-예를 들어, 번들 ID가 com.yourcompany.yourexampleapp 인 앱을 제공하는 경우 인증서에 다음 항목을 지정할 수 있습니다.
+With an APNs certificate, you can send notifications to the primary app identified by its bundle ID, and to any Apple Watch complications or background VoIP services associated with that app. 
+Use the certificate extension (1.2.840.113635.100.6.3.6) to identify the topics for push notifications. 
+For example, if you deliver an app whose bundle ID is com.yourcompany.yourexampleapp, the certificate can specify the following entries:
 
 ```
 1. Extension ( 1.2.840.113635.100.6.3.6 )
@@ -90,68 +94,66 @@ APN 인증서를 사용하여 번들 ID로 식별되는 기본 앱과 해당 앱
 
 ## APNs Connections
 
-원격 통지를 보내는 첫 번째 단계는 적절한 APN 서버와의 연결을 설정하는 것입니다:
+The first step in sending remote notifications is to establish a connection with the appropriate APNs server:
 
  - Development server: api.development.push.apple.com:443
  - Production server: api.push.apple.com:443
 
  ```
  NOTE
- APN과 통신 할 때 포트 2197을 사용할 수도 있습니다.
-예를 들어 방화벽을 통해 APN 트래픽을 허용하지만 다른 HTTPS 트래픽을 차단할 수 있습니다.
+ You can also use port 2197 when communicating with APNs, for example, if you allow APNs traffic through your firewall but block other HTTPS traffic.
  ```
 
-APN에 연결할 때 공급자가 TLS 1.2 이상을 지원해야합니다. 
-[범용 푸시 알림 클라이언트 SSL 인증서 만들기](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html#//apple_ref/doc/uid/TP40012582-CH26-SW11)에 설명 된대로
-[개발자 계정](https://developer.apple.com/account/)에서 가져온 공급자 클라이언트 인증서를 사용할 수 있습니다.
+When connecting to APNs, your provider must support TLS 1.2 or later. 
+As described in [Create a universal push notification client SSL certificate](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html#//apple_ref/doc/uid/TP40012582-CH26-SW11), you can use a provider client certificate obtained from your [developer account](https://developer.apple.com/account/).
 
-APN 공급자 인증서없이 연결하려면 대신 개발자 계정을 통해 제공되는 키로 서명 된 공급자 인증 토큰을 만들어야합니다 (Xcode 도움말의 ["푸시 알림 구성"](http://help.apple.com/xcode/mac/current/#/dev11b059073)참조). 
-이 토큰을 갖고 나면 푸시 메시지를 보낼 수 있습니다. 그런 다음 주기적으로 토큰을 업데이트해야합니다. 
-각 APNs 제공자 인증 토큰의 유효 기간은 1 시간입니다.
+To connect without an APNs provider certificate, create a provider authentication token signed with a key from your developer account (see Xcode Help, ["Configure push notifications"](http://help.apple.com/xcode/mac/current/#/dev11b059073)). 
+Once you have this token, you can send push messages. You must then refresh the token periodically. 
+Each APNs provider authentication token is valid for one hour.
 
-APN은 각 연결에 대해 여러 동시 스트림을 허용합니다. 스트림의 정확한 수는 공급자 인증서 또는 인증 토큰의 사용에 따라 다르며 서버 부하에 따라 다릅니다. 
-특정 수의 스트림을 가정하지 마십시오.
+APNs allows multiple concurrent streams on each connection. The exact number depends on whether you use a provider certificate or a provider token, and on server load. 
+Do not rely on a fixed stream count.
 
-인증서가 아닌 토큰을 사용하여 APN에 대한 연결을 설정할 때 유효한 공급자 인증 토큰이있는 푸시 메시지를 보낼 때까지 하나의 스트림 만 연결에 허용됩니다. 
-APN은 HTTP/2 PRIORITY 프레임을 무시하므로 스트림에서 보내지 마십시오.
+When you establish a connection using a token rather than a certificate, only a single stream is permitted until you send a push message with a valid provider authentication token. 
+APNs ignores HTTP/2 PRIORITY frames; do not send them.
 
 ## Best Practices for Managing Connections
 
-여러 알림에 걸쳐 APN 연결을 유지하십시오. 연결을 반복해서 열거 나 닫지 마십시오.
-APN은 빠른 연결 및 연결 해제를 서비스 거부 공격으로 간주합니다. 
-오랜 시간 동안 유휴 상태가 될 것이라는 것을 모르는 경우를 제외하고는 연결을 열어 두어야합니다. 
-예를 들어 하루에 한 번만 사용자에게 알림을 보내면 매일 새 연결을 사용하는 것이 좋습니다.
+Keep your APNs connections open across multiple notifications. Don’t repeatedly open and close connections.
+APNs treats rapid connection and disconnection as a denial-of-service attack. 
+Keep connections open unless you know they’ll be idle for a long period. 
+For example, if you send notifications only once per day, it’s reasonable to use a new connection each day.
 
-보내는 푸시 요청마다 새 공급자 인증 토큰을 생성하지 마십시오. 
-토큰을 얻은 후에 토큰의 유효 기간 (1 시간) 동안 모든 푸시 요청에 대해 토큰을 계속 사용하십시오.
+Don’t generate a new provider authentication token for every push request. 
+After obtaining a token, continue using it for all push requests for the token’s validity window (1 hour).
 
-성능을 향상시키기 위해 APN 서버에 여러 연결을 설정할 수 있습니다. 
-많은 수의 원격 통보를 보낼 때 여러 서버 끝점에 대한 연결을 통해 원격 통보를 배포하십시오.
-이렇게하면 단일 연결을 사용하는 것과 비교하여 원격 알림을 더 빨리 보내고 APN이 더 빨리 알림을 보내도록함으로써 성능이 향상됩니다.
+To improve performance, you can establish multiple connections to APNs. 
+When sending large volumes of remote notifications, distribute them across connections to multiple server endpoints.
+This sends notifications faster compared to using a single connection, and lets APNs deliver them more quickly as well.
 
-공급자 인증서가 해지되거나 공급자 토큰에 서명하는 데 사용하는 키가 취소 된 경우 APN에 대한 기존 연결을 모두 닫은 다음 새 연결을 엽니다.
+If your provider certificate is revoked, or the key used to sign your provider tokens is revoked, close all existing connections to APNs and open new ones.
 
-HTTP/2 PING 프레임을 사용하여 연결 상태를 확인할 수 있습니다.
+Use HTTP/2 PING frames to check connection health.
 
 
 ## Terminating an APNs Connection
 
-APN이 설정된 HTTP/2 연결을 종료하기로 결정하면 GOAWAY 프레임을 전송합니다. 
-GOAWAY 프레임은 이유 값 키를 사용하여 페이로드에 JSON 데이터를 포함하며 그 값은 연결 종료 이유를 나타냅니다. 
-이유 키의 가능한 값 목록은 표 8-6을 참조하십시오.
+When APNs decides to terminate an established HTTP/2 connection, it sends a GOAWAY frame. 
+The GOAWAY frame can include JSON data in the payload with a reason value that indicates why the connection is ending. 
+For the list of possible reason values, see Table 8-6.
 
-정상적인 요청 실패로 인해 연결이 종료되지 않습니다.
+Normal request failures do not cause the connection to be closed.
 
 
 ## APNs Notification API
 
-APNs Provider API는 요청과 HTTP/2 POST 명령을 사용하여 구성하고 보내는 응답으로 구성됩니다. 
-요청을 사용하여 APN 서버에 푸시 알림을 보내고 응답을 사용하여 해당 요청의 결과를 결정합니다.
+The APNs Provider API consists of requests that you construct and send using the HTTP/2 POST command, and the responses you receive. 
+Use requests to send push notifications to the APNs server and responses to determine the result of those requests.
 
 
 ## HTTP/2 Request to APNs
 
-요청을 사용하여 특정 사용자 장치에 알림을 보냅니다.
+Use a request to send a notification to a specific user device.
 
 
  <table class="graybox" border="0" cellspacing="0" cellpadding="5">
@@ -187,23 +189,23 @@ APNs Provider API는 요청과 HTTP/2 POST 명령을 사용하여 구성하고 �
   </table>
 
 
-<device-token> 매개 변수의 경우 대상 장치에 대한 장치 토큰의 16 진수 바이트를 지정하십시오.
+For the <device-token> parameter, specify the hexadecimal bytes of the device token for the target device.
 
-APN은 HPACK (HTTP/2 용 헤더 압축)을 사용해야 하며, 이는 반복되는 헤더 키와 값을 방지합니다.
-APN은 HPACK을위한 작은 동적 테이블을 유지 관리합니다. APNs HPACK 테이블을 채우지 않고 테이블 데이터를 삭제해야하는 경우 다음과 같은 방법으로 헤더를 인코딩하십시오 
-- 특히 많은 수의 스트림을 보낼 때 :
+APNs uses HPACK (HTTP/2 header compression) to avoid repeating header keys and values.
+APNs maintains a small dynamic table for HPACK. If you cannot rely on APNs' HPACK table being pre-populated—or want to avoid table eviction—encode headers as follows, especially when sending a large number of streams:
+- Especially when sending many streams:
 
- - :path 값은 인덱싱없이 리터럴 헤더 필드로 인코딩되어야합니다.
- - authorization 요청 헤더가있는 경우 인덱싱하지 않고 리터럴 헤더 필드로 인코딩해야합니다.
- - apns-id, apns-expiration 및 apns-collapse-id 요청 헤더에 사용할 적절한 인코딩은 다음과 같이 초기 또는 후속 POST 작업의 일부인지 여부에 따라 다릅니다.
+ - Encode the :path value as a literal header field without indexing.
+ - If the authorization request header is present, encode it as a literal header field without indexing.
+ - For the apns-id, apns-expiration, and apns-collapse-id request headers, the appropriate encoding depends on whether this is the first POST or a subsequent one:
 
-	- 처음으로이 헤더를 보내면 증분 인덱싱으로 인코딩하여 헤더 이름을 동적 테이블에 추가 할 수 있습니다.
-	- 이후에이 헤더를 보내고 인덱싱하지 않고 리터럴 헤더 필드로 인코딩합니다.
+	- On the first send of these headers, encode with incremental indexing so the header name is added to the dynamic table.
+	- On subsequent sends, encode as a literal header field without indexing.
 
 
-증분 색인을 사용하여 다른 모든 헤더를 리터럴 헤더 필드로 인코딩합니다. 
-헤더 인코딩에 대한 자세한 내용은 [tools.ietf.org/html/rfc7541#section-6.2.1](http://tools.ietf.org/html/rfc7541#section-6.2.1) 
-및 [tools.ietf.org/html/rfc7541#section-6.2.2](http://tools.ietf.org/html/rfc7541#section-6.2.2)를 참조하십시오.
+Encode all other headers as literal header fields using incremental indexing. 
+For details on header encoding, see [RFC 7541, Section 6.2.1](http://tools.ietf.org/html/rfc7541#section-6.2.1) 
+and [Section 6.2.2](http://tools.ietf.org/html/rfc7541#section-6.2.2).
 
 
  <table class="graybox" border="0" cellspacing="0" cellpadding="5">
@@ -298,14 +300,14 @@ APN은 HPACK을위한 작은 동적 테이블을 유지 관리합니다. APNs HP
 
 
 
-메시지 본문 내용은 알림 페이로드의 JSON 사전 개체입니다. 본문 데이터는 압축하지 않아야하며 최대 크기는 4KB (4096 바이트)입니다. 
-VoIP (Voice over Internet Protocol) 알림의 경우 본문 데이터 최대 크기는 5KB (5120 바이트)입니다. 
-본문 내용에 포함 할 키와 값에 대한 자세한 내용은 페이로드 키 참조를 참조하십시오.
+The message body is a JSON dictionary object for the notification payload. Do not compress the body; the maximum size is 4 KB (4096 bytes). 
+For VoIP (Voice over Internet Protocol) notifications, the maximum body size is 5 KB (5120 bytes). 
+For the keys and values to include in the payload, see the payload keys reference.
 
 
 ## HTTP/2 Response from APNs
 
-요청에 대한 응답은 표 8-3에 나열된 형식을 갖습니다.
+The response to the request has the format listed in Table 8-3.
 
 <table class="graybox" border="0" cellspacing="0" cellpadding="5">
     <caption class="tablecaption"><strong class="caption-number">Table 8-3</strong>APNs response headers</caption>
@@ -340,7 +342,7 @@ VoIP (Voice over Internet Protocol) 알림의 경우 본문 데이터 최대 크
   </table>
 
 
-표 8-4에는 요청의 가능한 상태 코드가 나열되어 있습니다. 이 값은 응답의 :status 헤더에 포함됩니다.
+Table 8-4 lists the possible status codes for a request. This value is included in the :status header of the response.
 
 
 
@@ -435,8 +437,8 @@ VoIP (Voice over Internet Protocol) 알림의 경우 본문 데이터 최대 크
 
 
 
-요청이 성공하면 응답 본문이 비어 있습니다. 실패시 응답 본문에는 표 8-5에 나열된 키가있는 JSON 사전이 포함되어 있습니다.
-이 JSON 데이터는 연결이 종료되면 GOAWAY 프레임에도 포함될 수 있습니다.
+If the request succeeds, the response body is empty. If it fails, the response body contains a JSON dictionary with the keys listed in Table 8-5.
+This JSON data can also be included in a GOAWAY frame if the connection is terminated.
 
 
  <table class="graybox" border="0" cellspacing="0" cellpadding="5">
@@ -476,7 +478,7 @@ VoIP (Voice over Internet Protocol) 알림의 경우 본문 데이터 최대 크
 
 
 
-표 8-6은 응답의 JSON 페이로드의 이유 키에 포함 된 가능한 오류 코드를 나열합니다.
+Table 8-6 lists the possible error codes included in the reason key of the JSON payload of the response.
 
 
 

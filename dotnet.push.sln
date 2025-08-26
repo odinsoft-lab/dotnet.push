@@ -9,19 +9,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CONTRIBUTING.md = CONTRIBUTING.md
 		generate_auth_key.md = generate_auth_key.md
 		http2handler.md = http2handler.md
-		LICENSE.txt = LICENSE.txt
+		LICENSE.md = LICENSE.md
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logo-files", "logo-files", "{3A3ABA83-DE36-49DB-A3BA-92078F3E14E4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "logo-files", "docs\logo-files", "{3A3ABA83-DE36-49DB-A3BA-92078F3E14E4}"
 	ProjectSection(SolutionItems) = preProject
-		logo-files\dotnet.push.ico = logo-files\dotnet.push.ico
-		logo-files\dotnet.push.png = logo-files\dotnet.push.png
+		docs\logo-files\dotnet.push.ico = docs\logo-files\dotnet.push.ico
+		docs\logo-files\dotnet.push.png = docs\logo-files\dotnet.push.png
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Push", "src\DotNet.Push\DotNet.Push.csproj", "{5A9B0D96-F639-446C-BA8E-BD11BD09E3B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Push.Sample", "src\DotNet.Push.Sample\DotNet.Push.Sample.csproj", "{EC3FF747-55B8-44EC-A2F1-047EE3B2B68E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNet.Push.Sample", "samples\DotNet.Push.Sample\DotNet.Push.Sample.csproj", "{EC3FF747-55B8-44EC-A2F1-047EE3B2B68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
