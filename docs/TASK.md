@@ -26,4 +26,4 @@ Lightweight task board for project maintainers and contributors. Use issues/PRs 
 - [x] Target frameworks updated to .NET 8/9; netstandard removed.
 
 ## Contributing
-See [../CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
+See [../docs/CONTRIBUTING.md](../docs/CONTRIBUTING.md) for guidelines.
